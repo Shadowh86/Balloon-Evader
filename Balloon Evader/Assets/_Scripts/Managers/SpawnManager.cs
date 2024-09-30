@@ -4,10 +4,12 @@ using Random = UnityEngine.Random;
 
 public class SpawnManager : MonoBehaviour
 {
+    
     [SerializeField] private GameObject balloonPrefab;
+    [Tooltip("Four floats for spawning balloons.")]
     [SerializeField] private Vector4 minMaxPosition;
-    [SerializeField] private int initialBalloonCount = 2;
     [SerializeField] private Material[] balloonMaterials;
+    [SerializeField] private int initialBalloonCount = 2;
 
     private void Awake()
     {

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 
 public class Balloon : MonoBehaviour
@@ -37,7 +38,7 @@ public class Balloon : MonoBehaviour
 
     private void PopBalloon()
     {
-        balloonAudioSource.Play(); // play audio of balloon pop
+        PopBalloonSound(); // play audio of balloon pop
         EventManager.PlayerEvent.OnScoreChanged(this, 1); // increase score by 1
         DisableBalloonInteraction();
         RequestNewBalloon();
@@ -64,15 +65,23 @@ public class Balloon : MonoBehaviour
     private void InflateBalloon()
     {
         transform.localScale += Vector3.one * scaleIncrement;
+        // transform.DOScale(scaleIncrement, 1);
         clickCounter++;
         balloonRigidbody.drag -= dragDecrement;
     }
 
+    private void PopBalloonSound()
+    {
+        balloonAudioSource.Play();
+    }
 
     private void OnCollisionEnter(Collision other)
     {
         if (other.gameObject.CompareTag("Limiter"))
         {
+            RequestNewBalloon();
+            PopBalloonSound();
+            EventManager.PlayerEvent.OnFlyBalloonUpdate(this, 1);
             Destroy(gameObject);
         }
     }
