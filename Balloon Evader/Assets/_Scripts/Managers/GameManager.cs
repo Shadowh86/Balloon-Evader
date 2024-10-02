@@ -42,7 +42,7 @@ public class GameManager : MonoBehaviour
         private set
         {
             score = value;
-            SaveSystem.UpdateHighscore(score);
+            SaveSystem.UpdateHighScore(score);
             OnScoreChanged();
         }
     }

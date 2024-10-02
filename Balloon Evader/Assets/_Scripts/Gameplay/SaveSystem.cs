@@ -1,4 +1,3 @@
-
 using UnityEngine;
 
 public class SaveSystem
@@ -15,7 +14,7 @@ public class SaveSystem
       }
    }
 
-   public static void UpdateHighscore(int score)
+   public static void UpdateHighScore(int score)
    {
       if (score > HighScore)
       {
@@ -23,7 +22,7 @@ public class SaveSystem
       }
    }
 
-   public static void ResetHighscore()
+   public static void ResetHighScore()
    {
       HighScore = 0;
    }
