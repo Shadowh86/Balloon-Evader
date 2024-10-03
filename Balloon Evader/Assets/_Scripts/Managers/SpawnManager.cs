@@ -4,23 +4,14 @@ using Random = UnityEngine.Random;
 
 public class SpawnManager : MonoBehaviour
 {
-    
     [SerializeField] private GameObject balloonPrefab;
-    [Tooltip("Four floats for spawning balloons.")]
-    [SerializeField] private Vector4 minMaxPosition;
+
+    [Tooltip("Four floats for spawning balloons.")] [SerializeField]
+    private Vector4 minMaxPosition;
+
     [SerializeField] private Material[] balloonMaterials;
     [SerializeField] private int initialBalloonCount = 2;
-
-
-    private void OnEnable()
-    {
-        EventManager.GameManagerEvent.OnMethodActivate += SpawnBalloon;
-    }
-    private void OnDisable()
-    {
-        EventManager.GameManagerEvent.OnMethodActivate -= SpawnBalloon;
-    }
-
+    
     private void Start()
     {
         for (int i = 0; i < initialBalloonCount; i++)
@@ -28,7 +19,6 @@ public class SpawnManager : MonoBehaviour
             SpawnBalloon();
         }
     }
-
 
     // Setting random position for ballon
     public Vector3 GetRandomPosition()
@@ -38,9 +28,6 @@ public class SpawnManager : MonoBehaviour
         return new Vector3(randomX, randomY, 0);
     }
 
-    /// if you have certain score spawn another balloon
-    /// Find a way to send this method without reference
-    /// Event Aggregator is so far best option
     private void SpawnBalloon()
     {
         GameObject balloon = Instantiate(balloonPrefab, GetRandomPosition(), Quaternion.identity);
@@ -54,5 +41,15 @@ public class SpawnManager : MonoBehaviour
             int randomMaterial = Random.Range(0, balloonMaterials.Length);
             balloon.GetComponentInChildren<MeshRenderer>().material = balloonMaterials[randomMaterial];
         }
+    }
+
+    private void OnEnable()
+    {
+        EventManager.GameManagerEvent.OnSpawnNewBalloon += SpawnBalloon;
+    }
+
+    private void OnDisable()
+    {
+        EventManager.GameManagerEvent.OnSpawnNewBalloon -= SpawnBalloon;
     }
 }

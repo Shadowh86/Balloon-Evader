@@ -2,12 +2,12 @@ using System;
 
 public static class EventManager
 {
-    
-    public class  GameManagerEvent
+    public class GameManagerEvent
     {
         public static Action<int> OnScoreChanged;
         public static Action<int> OnFlyBalloonUpdate;
-        public static Action  OnMethodActivate;
+        public static Action OnSpawnNewBalloon;
+        public static Action OnGameOver;
     }
 
     public class UIEvent

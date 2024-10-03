@@ -1,6 +1,9 @@
+using System.Collections;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
@@ -10,11 +13,19 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TMP_Text highScoreText;
     [SerializeField] private string highScoreBeginText = "HighScore: ";
     [SerializeField] private TMP_Text maxBalloonsFlyAway;
+    
+    
+    [Header("Loading")] [SerializeField] private GameObject mainPanel;
+    [SerializeField] private GameObject loadingPanel;
+    [SerializeField] private Slider percentSlider;
+    [SerializeField] private TMP_Text percentText;
 
     [Header("DoTween score shake")] [SerializeField]
     private float shakeDuration = 0.4f;
 
     [SerializeField] private float shakeStrength = 40f;
+    
+    private Coroutine loadCoroutine;
 
     private void Awake()
     {
@@ -28,9 +39,40 @@ public class UIManager : MonoBehaviour
     {
         UpdateScoreDisplay(0);
         UpdateHighScoreDisplay();
+        
+        mainPanel.SetActive(true);
+        loadingPanel.SetActive(false);
     }
 
-    private void UpdateUI( int newScore)
+    private void UIGameOver()
+    {
+        loadCoroutine = StartCoroutine(LoadMainMenu());
+    }
+    
+    IEnumerator LoadMainMenu()
+    {
+        mainPanel.SetActive(false);
+        loadingPanel.SetActive(true);
+
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("MainMenu");
+        asyncLoad.allowSceneActivation = false;
+
+        while (!asyncLoad.isDone)
+        {
+            float progress = Mathf.Clamp01(asyncLoad.progress / 0.9f);
+            percentSlider.value = progress;
+            percentText.text = $"{progress * 100:F0}%";
+
+            if (asyncLoad.progress >= 0.9f)
+            {
+                asyncLoad.allowSceneActivation = true;
+            }
+
+            yield return null;
+        }
+    }
+
+    private void UpdateUI(int newScore)
     {
         UpdateScoreDisplay(newScore);
         UpdateHighScoreDisplay();
@@ -55,7 +97,7 @@ public class UIManager : MonoBehaviour
         highScoreText.text = highScoreBeginText + SaveSystem.HighScore;
     }
 
-    private void UpdateFlyBalloons( int flyBalloons)
+    private void UpdateFlyBalloons(int flyBalloons)
     {
         FlownBalloons(flyBalloons);
     }
@@ -67,17 +109,21 @@ public class UIManager : MonoBehaviour
 
     private void OnEnable()
     {
-       // EventManager.PlayerEvent.OnUIUpdate += UpdateUI;
-       EventManager.UIEvent.OnUIUpdate += UpdateUI;
-       EventManager.UIEvent.OnUIMaxLivesUpdate += UpdateFlyBalloons;
-        //EventManager.PlayerEvent.OnUIMaxLivesUpdate += UpdateFlyBalloons;
+        EventManager.UIEvent.OnUIUpdate += UpdateUI;
+        EventManager.UIEvent.OnUIMaxLivesUpdate += UpdateFlyBalloons;
+        EventManager.GameManagerEvent.OnGameOver += UIGameOver;
     }
 
     private void OnDisable()
     {
-        //EventManager.PlayerEvent.OnUIUpdate -= UpdateUI;
         EventManager.UIEvent.OnUIUpdate -= UpdateUI;
         EventManager.UIEvent.OnUIMaxLivesUpdate -= UpdateFlyBalloons;
-       // EventManager.PlayerEvent.OnUIMaxLivesUpdate -= UpdateFlyBalloons;
+        EventManager.GameManagerEvent.OnGameOver -= UIGameOver;
+        
+        if (loadCoroutine != null)
+        {
+            StopCoroutine(loadCoroutine);
+            loadCoroutine = null;
+        }
     }
 }

@@ -6,6 +6,7 @@ public class Balloon : MonoBehaviour
     [SerializeField] private int maxClicks = 6;
     [SerializeField] private float scaleIncrement = 0.2f;
     [SerializeField] private float dragDecrement = 1.5f;
+    [SerializeField] private int popValue = 1; // value of destroyed balloon
 
 
     private SpawnManager spawnManager;
@@ -36,8 +37,7 @@ public class Balloon : MonoBehaviour
     private void PopBalloon()
     {
         PopBalloonSound(); // play audio of balloon pop
-        EventManager.GameManagerEvent.OnScoreChanged(1); // increase score by send value (in this example 1)
-        //EventManager.PlayerEvent.OnScoreChanged(this, 1); // increase score by send value (in this example 1)
+        EventManager.GameManagerEvent.OnScoreChanged(popValue); // increase score by send value (in this example 1)
         DisableBalloonInteraction();
         RequestNewBalloon();
         Destroy(gameObject, 0.5f); // destroy this game object
@@ -45,7 +45,7 @@ public class Balloon : MonoBehaviour
 
     private void RequestNewBalloon()
     {
-        EventManager.GameManagerEvent.OnMethodActivate?.Invoke();
+        EventManager.GameManagerEvent.OnSpawnNewBalloon?.Invoke();
     }
 
     private void DisableBalloonInteraction()
@@ -65,7 +65,6 @@ public class Balloon : MonoBehaviour
         // transform.DOScale(scaleIncrement, 1);
         clickCounter++;
         balloonRigidbody.drag -= dragDecrement;
-        
     }
 
     private void PopBalloonSound()
@@ -80,7 +79,7 @@ public class Balloon : MonoBehaviour
             RequestNewBalloon();
             PopBalloonSound();
             //EventManager.PlayerEvent.OnFlyBalloonUpdate(this, 1);
-            EventManager.GameManagerEvent.OnFlyBalloonUpdate?.Invoke(1); 
+            EventManager.GameManagerEvent.OnFlyBalloonUpdate?.Invoke(1);
             Destroy(gameObject);
         }
     }

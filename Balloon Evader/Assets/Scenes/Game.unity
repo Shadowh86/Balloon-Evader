@@ -860,7 +860,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scoreText: {fileID: 910285027}
   highScoreText: {fileID: 296522280}
+  highScoreBeginText: 'HighScore: '
   maxBalloonsFlyAway: {fileID: 222586155}
+  mainPanel: {fileID: 1114970338}
+  loadingPanel: {fileID: 952041814}
+  percentSlider: {fileID: 1429315158}
+  percentText: {fileID: 953435111}
   shakeDuration: 0.15
   shakeStrength: 1.3
 --- !u!114 &823545898
@@ -875,10 +880,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d039accc0b4de46d3b3890048664bcd4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainPanel: {fileID: 1114970338}
-  loadingPanel: {fileID: 952041814}
-  percentSlider: {fileID: 1429315158}
-  percentText: {fileID: 953435111}
   timeToSpawnNewBalloon: 8
 --- !u!1 &832575517
 GameObject:
