@@ -11,21 +11,21 @@ public class SpawnManager : MonoBehaviour
     [SerializeField] private Material[] balloonMaterials;
     [SerializeField] private int initialBalloonCount = 2;
 
-    private void Awake()
-    {
-        EventManager.PlayerEvent.OnMethodActivate += SpawnBalloon;
-    }
 
-    private void OnDestroy()
+    private void OnEnable()
     {
-        EventManager.PlayerEvent.OnMethodActivate -= SpawnBalloon;
+        EventManager.GameManagerEvent.OnMethodActivate += SpawnBalloon;
+    }
+    private void OnDisable()
+    {
+        EventManager.GameManagerEvent.OnMethodActivate -= SpawnBalloon;
     }
 
     private void Start()
     {
         for (int i = 0; i < initialBalloonCount; i++)
         {
-            SpawnBalloon(this, EventArgs.Empty);
+            SpawnBalloon();
         }
     }
 
@@ -41,7 +41,7 @@ public class SpawnManager : MonoBehaviour
     /// if you have certain score spawn another balloon
     /// Find a way to send this method without reference
     /// Event Aggregator is so far best option
-    private void SpawnBalloon(object sender, EventArgs e)
+    private void SpawnBalloon()
     {
         GameObject balloon = Instantiate(balloonPrefab, GetRandomPosition(), Quaternion.identity);
         SetRandomMaterial(balloon);

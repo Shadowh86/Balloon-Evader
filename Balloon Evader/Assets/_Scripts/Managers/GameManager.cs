@@ -43,7 +43,8 @@ public class GameManager : MonoBehaviour
         {
             score = value;
             SaveSystem.UpdateHighScore(score);
-            OnScoreChanged();
+            //EventManager.PlayerEvent.OnUIUpdate?.Invoke(this, Score);
+            EventManager.UIEvent.OnUIUpdate(score);
         }
     }
 
@@ -53,10 +54,9 @@ public class GameManager : MonoBehaviour
         loadingPanel.SetActive(false);
         StartCoroutine(IncreaseBalloonNumber());
         OnBalloonsFlyAway();
-        EventManager.PlayerEvent.OnHighScoreUpdate?.Invoke(this, SaveSystem.HighScore);
     }
 
-    void UpdateScore(Component component, int scoreChanged)
+    void UpdateScore(int scoreChanged)
     {
         Score += scoreChanged;
     }
@@ -70,23 +70,17 @@ public class GameManager : MonoBehaviour
 
     private void RequestNewBalloon()
     {
-        EventManager.PlayerEvent.OnMethodActivate?.Invoke(this,
-            EventArgs.Empty); // spawn another balloon
-    }
-
-    void OnScoreChanged() // Update UI
-    {
-        EventManager.PlayerEvent.OnUIUpdate?.Invoke(this, Score);
-        EventManager.PlayerEvent.OnHighScoreUpdate?.Invoke(this, SaveSystem.HighScore);
+        EventManager.GameManagerEvent.OnMethodActivate?.Invoke();
     }
 
     private void OnBalloonsFlyAway()
     {
         // send event to update max lives
-        EventManager.PlayerEvent.OnUIMaxLivesUpdate?.Invoke(this, MaxBalloonsFlyAway);
+        //EventManager.PlayerEvent.OnUIMaxLivesUpdate?.Invoke(this, MaxBalloonsFlyAway);
+        EventManager.UIEvent.OnUIMaxLivesUpdate?.Invoke(MaxBalloonsFlyAway);
     }
 
-    private void UpdateFlyBalloons(object _object, int flyBalloons)
+    private void UpdateFlyBalloons( int flyBalloons)
     {
         MaxBalloonsFlyAway -= flyBalloons;
     }
@@ -126,14 +120,24 @@ public class GameManager : MonoBehaviour
 
         private void OnEnable()
         {
-            EventManager.PlayerEvent.OnScoreChanged += UpdateScore;
-            EventManager.PlayerEvent.OnFlyBalloonUpdate += UpdateFlyBalloons;
+            //EventManager.PlayerEvent.OnScoreChanged += UpdateScore;
+            EventManager.GameManagerEvent.OnScoreChanged += UpdateScore;
+           // EventManager.PlayerEvent.OnFlyBalloonUpdate += UpdateFlyBalloons;
+            EventManager.GameManagerEvent.OnFlyBalloonUpdate += UpdateFlyBalloons;
         }
 
         private void OnDisable()
         {
-            EventManager.PlayerEvent.OnScoreChanged -= UpdateScore;
-            EventManager.PlayerEvent.OnFlyBalloonUpdate -= UpdateFlyBalloons;
+            //EventManager.PlayerEvent.OnScoreChanged -= UpdateScore;
+            EventManager.GameManagerEvent.OnScoreChanged -= UpdateScore;
+            //EventManager.PlayerEvent.OnFlyBalloonUpdate -= UpdateFlyBalloons;
+            EventManager.GameManagerEvent.OnFlyBalloonUpdate  -= UpdateFlyBalloons;
+            
+            if (loadCoroutine != null)
+            {
+                StopCoroutine(loadCoroutine);
+                loadCoroutine = null;
+            }
         }
 
         #endregion

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -11,6 +12,7 @@ public class MainMenuManager : MonoBehaviour
    [SerializeField] private GameObject loadingPanel;
    [SerializeField] private Slider percentSlider;
    [SerializeField] private TMP_Text percentText;
+   [SerializeField] string  sceneName = "Game";
 
    private Coroutine loadingCoroutine;
    private void Start()
@@ -40,8 +42,8 @@ public class MainMenuManager : MonoBehaviour
    {
       mainPanel.SetActive(false);
       loadingPanel.SetActive(true);
-
-      AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("Game");
+      
+      AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
       asyncLoad.allowSceneActivation = false;
 
       while (!asyncLoad.isDone)
@@ -58,4 +60,12 @@ public class MainMenuManager : MonoBehaviour
       }
    }
 
+   private void OnDisable()
+   {
+      if (loadingCoroutine != null)
+      {
+         StopCoroutine(loadingCoroutine);
+         loadingCoroutine = null;
+      }
+   }
 }

@@ -36,7 +36,8 @@ public class Balloon : MonoBehaviour
     private void PopBalloon()
     {
         PopBalloonSound(); // play audio of balloon pop
-        EventManager.PlayerEvent.OnScoreChanged(this, 1); // increase score by 1
+        EventManager.GameManagerEvent.OnScoreChanged(1); // increase score by send value (in this example 1)
+        //EventManager.PlayerEvent.OnScoreChanged(this, 1); // increase score by send value (in this example 1)
         DisableBalloonInteraction();
         RequestNewBalloon();
         Destroy(gameObject, 0.5f); // destroy this game object
@@ -44,8 +45,7 @@ public class Balloon : MonoBehaviour
 
     private void RequestNewBalloon()
     {
-        EventManager.PlayerEvent.OnMethodActivate?.Invoke(this,
-            EventArgs.Empty); // spawn another balloon
+        EventManager.GameManagerEvent.OnMethodActivate?.Invoke();
     }
 
     private void DisableBalloonInteraction()
@@ -65,6 +65,7 @@ public class Balloon : MonoBehaviour
         // transform.DOScale(scaleIncrement, 1);
         clickCounter++;
         balloonRigidbody.drag -= dragDecrement;
+        
     }
 
     private void PopBalloonSound()
@@ -78,7 +79,8 @@ public class Balloon : MonoBehaviour
         {
             RequestNewBalloon();
             PopBalloonSound();
-            EventManager.PlayerEvent.OnFlyBalloonUpdate(this, 1);
+            //EventManager.PlayerEvent.OnFlyBalloonUpdate(this, 1);
+            EventManager.GameManagerEvent.OnFlyBalloonUpdate?.Invoke(1); 
             Destroy(gameObject);
         }
     }
