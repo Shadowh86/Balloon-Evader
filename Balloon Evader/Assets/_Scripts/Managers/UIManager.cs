@@ -14,7 +14,6 @@ public class UIManager : MonoBehaviour
     [SerializeField] private string highScoreBeginText = "HighScore: ";
     [SerializeField] private TMP_Text maxBalloonsFlyAway;
     
-    
     [Header("Loading")] [SerializeField] private GameObject mainPanel;
     [SerializeField] private GameObject loadingPanel;
     [SerializeField] private Slider percentSlider;
@@ -35,6 +34,7 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    
     private void Start()
     {
         UpdateScoreDisplay(0);

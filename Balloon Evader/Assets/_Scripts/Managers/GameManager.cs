@@ -1,16 +1,10 @@
-using System;
 using System.Collections;
-using TMPro;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-
-    [Space(10)] [SerializeField] private float timeToSpawnNewBalloon;
-
-
+    [SerializeField] private float timeToSpawnNewBalloon;
 
     #region Score Region
 
@@ -28,6 +22,7 @@ public class GameManager : MonoBehaviour
                 GameOver();
             }
         }
+        
     }
 
     private int score;
@@ -47,6 +42,7 @@ public class GameManager : MonoBehaviour
     {
         StartCoroutine(IncreaseBalloonNumber());
         OnBalloonsFlyAway();
+        print(Score);
     }
 
     void UpdateScore(int scoreChanged)
@@ -83,8 +79,6 @@ public class GameManager : MonoBehaviour
         EventManager.GameManagerEvent.OnGameOver?.Invoke();
     }
 
-    
-
     #endregion
 
     #region Subscribe To Events
@@ -99,8 +93,6 @@ public class GameManager : MonoBehaviour
     {
         EventManager.GameManagerEvent.OnScoreChanged -= UpdateScore;
         EventManager.GameManagerEvent.OnFlyBalloonUpdate -= UpdateFlyBalloons;
-
-       
     }
 
     #endregion

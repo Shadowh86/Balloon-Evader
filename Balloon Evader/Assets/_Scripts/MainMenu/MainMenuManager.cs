@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -24,7 +23,6 @@ public class MainMenuManager : MonoBehaviour
 
    public void PlayGame()
    {
-      
      loadingCoroutine = StartCoroutine(LoadLevel());
    }
 
