@@ -5,25 +5,31 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+/// <summary>
+/// This class is manager that controls all UI operations and elements
+/// Author: @Tomislav Marković
+/// </summary>
 public class UIManager : MonoBehaviour
 {
-    [Header("Text Mesh Pro")] [SerializeField]
+    [Header("Text mesh Pro")] [SerializeField]
     private TMP_Text scoreText;
 
     [SerializeField] private TMP_Text highScoreText;
-    [SerializeField] private string highScoreBeginText = "HighScore: ";
     [SerializeField] private TMP_Text maxBalloonsFlyAway;
-    
-    [Header("Loading")] [SerializeField] private GameObject mainPanel;
-    [SerializeField] private GameObject loadingPanel;
-    [SerializeField] private Slider percentSlider;
     [SerializeField] private TMP_Text percentText;
+    [Header("String")] [SerializeField] private string highScoreBeginText = "HighScore: ";
 
-    [Header("DoTween score shake")] [SerializeField]
-    private float shakeDuration = 0.4f;
+    [Header("Game Objects")] [SerializeField]
+    private GameObject mainPanel;
 
+    [SerializeField] private GameObject loadingPanel;
+
+    [Header("Floats")] [SerializeField] private float shakeDuration = 0.4f;
     [SerializeField] private float shakeStrength = 40f;
-    
+
+    [Space(5)] [Header("Slider")] [SerializeField]
+    private Slider percentSlider;
+
     private Coroutine loadCoroutine;
 
     private void Awake()
@@ -34,25 +40,24 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    
     private void Start()
     {
         UpdateScoreDisplay(0);
         UpdateHighScoreDisplay();
-        
-        mainPanel.SetActive(true);
-        loadingPanel.SetActive(false);
+
+        mainPanel.Activate();
+        loadingPanel.Deactivate();
     }
 
     private void UIGameOver()
     {
         loadCoroutine = StartCoroutine(LoadMainMenu());
     }
-    
+
     IEnumerator LoadMainMenu()
     {
-        mainPanel.SetActive(false);
-        loadingPanel.SetActive(true);
+        mainPanel.Deactivate();
+        loadingPanel.Activate();
 
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("MainMenu");
         asyncLoad.allowSceneActivation = false;
@@ -119,7 +124,7 @@ public class UIManager : MonoBehaviour
         EventManager.UIEvent.OnUIUpdate -= UpdateUI;
         EventManager.UIEvent.OnUIMaxLivesUpdate -= UpdateFlyBalloons;
         EventManager.GameManagerEvent.OnGameOver -= UIGameOver;
-        
+
         if (loadCoroutine != null)
         {
             StopCoroutine(loadCoroutine);

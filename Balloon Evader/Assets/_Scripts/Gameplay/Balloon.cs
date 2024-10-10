@@ -1,5 +1,10 @@
 using UnityEngine;
 
+
+/// <summary>
+/// Class that is on Balloon.prefab where it checks what is happening to it.
+/// @Tomislav Marković
+/// </summary>
 public class Balloon : MonoBehaviour
 {
     [SerializeField] private int maxClicks = 6;
@@ -23,9 +28,10 @@ public class Balloon : MonoBehaviour
         balloonMeshRenderer = GetComponentInChildren<MeshRenderer>();
     }
 
+    // Unity method that is triggered when player presses object with collider
     private void OnMouseDown()
     {
-        InflateBalloon();
+        InflateBalloon(); 
 
         if (IsBalloonFullyInflated())
         {
@@ -33,18 +39,20 @@ public class Balloon : MonoBehaviour
         }
     }
 
+    
     private void PopBalloon()
     {
         PopBalloonSound(); // play audio of balloon pop
         EventManager.GameManagerEvent.OnScoreChanged(popValue); // increase score by send value (in this example 1)
-        DisableBalloonInteraction();
-        RequestNewBalloon();
+        DisableBalloonInteraction(); 
+        RequestNewBalloon(); // send event to request to spawn new balloon
         Destroy(gameObject, 0.5f); // destroy this game object
     }
 
+    
     private void RequestNewBalloon()
     {
-        EventManager.GameManagerEvent.OnSpawnNewBalloon?.Invoke();
+        EventManager.SpawnEvent.OnSpawnNewBalloon?.Invoke();
     }
 
     private void DisableBalloonInteraction()
@@ -53,17 +61,18 @@ public class Balloon : MonoBehaviour
         balloonMeshRenderer.enabled = false; // disable mesh so player thinks balloon is popped
     }
 
+    // check if clicks are equal or greater than max clicks
     private bool IsBalloonFullyInflated()
     {
         return clickCounter >= maxClicks;
     }
 
+    
     private void InflateBalloon()
     {
-        transform.localScale += Vector3.one * scaleIncrement;
-        // transform.DOScale(scaleIncrement, 1);
-        clickCounter++;
-        balloonRigidbody.drag -= dragDecrement;
+        transform.localScale += Vector3.one * scaleIncrement; // increase size of object by 1 * scaleIncrement 
+        clickCounter++; // counter to count how many clicks has player pressed
+        balloonRigidbody.drag -= dragDecrement; // reducing drag so balloon can fly faster as it is getting larger
     }
 
     private void PopBalloonSound()
@@ -71,6 +80,7 @@ public class Balloon : MonoBehaviour
         balloonAudioSource.Play();
     }
 
+    // if balloon enters limiter collier it destroys balloon game object and requests new balloon
     private void OnCollisionEnter(Collision other)
     {
         if (other.gameObject.CompareTag("Limiter"))

@@ -4,66 +4,76 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+/// <summary>
+/// Main Manager class that it manages main menu scene.
+/// Button control and loading screen
+/// @Tomislav Marković
+/// </summary>
 public class MainMenuManager : MonoBehaviour
 {
-   [SerializeField] private TMP_Text highScoreText;
-   [SerializeField] private GameObject mainPanel;
-   [SerializeField] private GameObject loadingPanel;
-   [SerializeField] private Slider percentSlider;
-   [SerializeField] private TMP_Text percentText;
-   [SerializeField] string  sceneName = "Game";
+    [Header("Text mesh pro")] [SerializeField]
+    private TMP_Text highScoreText;
+    [SerializeField] private TMP_Text percentText;
 
-   private Coroutine loadingCoroutine;
-   private void Start()
-   {
-      mainPanel.SetActive(true);
-      loadingPanel.SetActive(false);
-      UpdateHighScoreDisplay();
-   }
+    [Header("Game Objects")] [SerializeField]
+    private GameObject mainPanel;
+    [SerializeField] private GameObject loadingPanel;
 
-   public void PlayGame()
-   {
-     loadingCoroutine = StartCoroutine(LoadLevel());
-   }
+    [Header("String")] [SerializeField] string sceneName = "Game";
+    [Header("Slider")] [SerializeField] private Slider percentSlider;
+    private Coroutine loadingCoroutine;
 
-   public void ExitGame()
-   {
-      Application.Quit();
-   }
-   
-   private void UpdateHighScoreDisplay()
-   {
-      highScoreText.text = $"HighScore: {SaveSystem.HighScore}";
-   }
-   
-   IEnumerator LoadLevel()
-   {
-      mainPanel.SetActive(false);
-      loadingPanel.SetActive(true);
-      
-      AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
-      asyncLoad.allowSceneActivation = false;
+    private void Start()
+    {
+        mainPanel.Activate();
+        loadingPanel.Deactivate();
+        UpdateHighScoreDisplay();
+    }
 
-      while (!asyncLoad.isDone)
-      {
-         float progress = Mathf.Clamp01(asyncLoad.progress / 0.9f);
-         percentSlider.value = progress;
-         percentText.text = $"{progress * 100:F0}%";
+    public void PlayGame()
+    {
+        loadingCoroutine = StartCoroutine(LoadLevel());
+    }
 
-         if (asyncLoad.progress >= 0.9f)
-         {
-            asyncLoad.allowSceneActivation = true;
-         }
-         yield return null;
-      }
-   }
+    public void ExitGame()
+    {
+        Application.Quit();
+    }
 
-   private void OnDisable()
-   {
-      if (loadingCoroutine != null)
-      {
-         StopCoroutine(loadingCoroutine);
-         loadingCoroutine = null;
-      }
-   }
+    private void UpdateHighScoreDisplay()
+    {
+        highScoreText.text = $"HighScore: {SaveSystem.HighScore}";
+    }
+
+    IEnumerator LoadLevel()
+    {
+        mainPanel.Deactivate();
+        loadingPanel.Activate();
+
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
+        asyncLoad.allowSceneActivation = false;
+
+        while (!asyncLoad.isDone)
+        {
+            float progress = Mathf.Clamp01(asyncLoad.progress / 0.9f);
+            percentSlider.value = progress;
+            percentText.text = $"{progress * 100:F0}%";
+
+            if (asyncLoad.progress >= 0.9f)
+            {
+                asyncLoad.allowSceneActivation = true;
+            }
+
+            yield return null;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (loadingCoroutine != null)
+        {
+            StopCoroutine(loadingCoroutine);
+            loadingCoroutine = null;
+        }
+    }
 }
